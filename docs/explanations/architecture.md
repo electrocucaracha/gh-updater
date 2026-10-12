@@ -43,18 +43,18 @@ with verbosity controlled by `--log-level`.
 The reference project was reviewed at commit
 [`193efa7`](https://github.com/electrocucaracha/ai-prepare-commit-msg/tree/193efa78e031763174041cc46eddb7bbee7bcfa8).
 
-| Area | Adaptation |
-| --- | --- |
-| CLI | Click provides option parsing, help, and progress output |
-| Packaging | Hatchling builds the existing src-layout package |
-| Development | uv dependency groups and a committed lockfile |
-| Checks | tox commands behind familiar Make targets |
-| Tests | pytest collects existing unittest cases; pytest-cov enforces 80% coverage |
-| Python style | Ruff handles lint, imports, and formatting instead of overlapping Black/isort/Ruff passes |
-| Hooks | Local pre-commit hooks reuse locked tools without AI commit generation |
-| Copilot | Scoped Python, quality-gate, and Markdown instruction files |
-| CI | Separate test and lint workflows with pinned actions and manual execution |
-| Documentation | Contributor guide, workflow inventory, and task/reference/explanation navigation |
+| Area          | Adaptation                                                                                |
+| ------------- | ----------------------------------------------------------------------------------------- |
+| CLI           | Click provides option parsing, help, and progress output                                  |
+| Packaging     | Hatchling builds the existing src-layout package                                          |
+| Development   | uv dependency groups and a committed lockfile                                             |
+| Checks        | tox commands behind familiar Make targets                                                 |
+| Tests         | pytest collects existing unittest cases; pytest-cov enforces 80% coverage                 |
+| Python style  | Ruff handles lint, imports, and formatting instead of overlapping Black/isort/Ruff passes |
+| Hooks         | Local pre-commit hooks reuse locked tools without AI commit generation                    |
+| Copilot       | Scoped Python, quality-gate, and Markdown instruction files                               |
+| CI            | Separate test and lint workflows with pinned actions and manual execution                 |
+| Documentation | Contributor guide, workflow inventory, and task/reference/explanation navigation          |
 
 Runtime AI providers, GitPython, and provider plugins are not reused:
 this CLI does not generate text with an LLM

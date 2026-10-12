@@ -33,14 +33,14 @@ Use semantic line breaks in Markdown.
 
 ## Validate
 
-| Command | Purpose |
-| --- | --- |
-| `make setup` | Install all locked dependency groups |
-| `make fmt` | Format Python and sort imports with Ruff |
-| `make lint` | Check Python style and repository YAML |
-| `make test` | Run pytest and the installed CLI help command |
-| `make coverage` | Require at least 80% line coverage |
-| `make build` | Build a wheel and source distribution with Hatchling |
+| Command         | Purpose                                              |
+| --------------- | ---------------------------------------------------- |
+| `make setup`    | Install all locked dependency groups                 |
+| `make fmt`      | Format Python and sort imports with Ruff             |
+| `make lint`     | Check Python style and repository YAML               |
+| `make test`     | Run pytest and the installed CLI help command        |
+| `make coverage` | Require at least 80% line coverage                   |
+| `make build`    | Build a wheel and source distribution with Hatchling |
 
 Make delegates to uv and the tox environments in `pyproject.toml`.
 The lockfile pins the uv development environment;

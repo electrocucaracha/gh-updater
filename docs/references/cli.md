@@ -4,14 +4,14 @@
 gh-updater [OPTIONS] [REPOSITORY]
 ```
 
-| Argument | Default | Meaning |
-| --- | --- | --- |
-| `repository` | Current directory | Directory to scan; it need not contain Git metadata |
-| `--dry-run` | Off | Resolve and report updates without writing files |
-| `--exclude OWNER/REPO[/PATH]` | None | Skip an upstream repository or exact action path; repeat as needed |
-| `--log-level LEVEL` | `WARNING` | Diagnostic verbosity: `DEBUG`, `INFO`, `WARNING`, `ERROR`, or `CRITICAL` (case-insensitive) |
-| `--workers N` | `min(32, CPUs + 4)`, capped at the upstream count | Number of parallel lookup workers (at least 1); also read from `GH_UPDATER_WORKERS` |
-| `-h`, `--help` | Off | Display usage and exit |
+| Argument                      | Default                                           | Meaning                                                                                     |
+| ----------------------------- | ------------------------------------------------- | ------------------------------------------------------------------------------------------- |
+| `repository`                  | Current directory                                 | Directory to scan; it need not contain Git metadata                                         |
+| `--dry-run`                   | Off                                               | Resolve and report updates without writing files                                            |
+| `--exclude OWNER/REPO[/PATH]` | None                                              | Skip an upstream repository or exact action path; repeat as needed                          |
+| `--log-level LEVEL`           | `WARNING`                                         | Diagnostic verbosity: `DEBUG`, `INFO`, `WARNING`, `ERROR`, or `CRITICAL` (case-insensitive) |
+| `--workers N`                 | `min(32, CPUs + 4)`, capped at the upstream count | Number of parallel lookup workers (at least 1); also read from `GH_UPDATER_WORKERS`         |
+| `-h`, `--help`                | Off                                               | Display usage and exit                                                                      |
 
 `python -m gh_updater` accepts the same options.
 

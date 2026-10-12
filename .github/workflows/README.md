@@ -1,9 +1,9 @@
 # Available workflows
 
-| Workflow | Purpose | Triggers |
-| --- | --- | --- |
+| Workflow                             | Purpose                                                          | Triggers                            |
+| ------------------------------------ | ---------------------------------------------------------------- | ----------------------------------- |
 | [on-demand_ci.yml](on-demand_ci.yml) | Tests, 80% coverage gate, CLI smoke test, and distribution build | Push, pull request, manual dispatch |
-| [linter.yml](linter.yml) | Ruff lint, formatting checks, and YAML lint | Push, pull request, manual dispatch |
+| [linter.yml](linter.yml)             | Ruff lint, formatting checks, and YAML lint                      | Push, pull request, manual dispatch |
 
 The test matrix covers Python 3.10 through 3.14 on Linux
 and Python 3.14 on macOS.
