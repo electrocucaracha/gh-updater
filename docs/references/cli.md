@@ -10,6 +10,7 @@ gh-updater [OPTIONS] [REPOSITORY]
 | `--dry-run` | Off | Resolve and report updates without writing files |
 | `--exclude OWNER/REPO[/PATH]` | None | Skip an upstream repository or exact action path; repeat as needed |
 | `--log-level LEVEL` | `WARNING` | Diagnostic verbosity: `DEBUG`, `INFO`, `WARNING`, `ERROR`, or `CRITICAL` (case-insensitive) |
+| `--workers N` | `min(32, CPUs + 4)`, capped at the upstream count | Number of parallel lookup workers (at least 1); also read from `GH_UPDATER_WORKERS` |
 | `-h`, `--help` | Off | Display usage and exit |
 
 `python -m gh_updater` accepts the same options.
@@ -68,7 +69,9 @@ Existing Git credentials handle private repositories;
 the CLI does not read a GitHub token argument
 or configure authentication.
 Each repository lookup has a 60-second timeout.
-Independent repositories are queried in parallel using a bounded thread pool,
+After discovering how many upstream repositories are referenced,
+the CLI splits them round-robin across `--workers` workers.
+Each worker resolves its share sequentially in its own thread,
 with one lookup per upstream repository per invocation.
 
 ## Output and exit status
@@ -84,6 +87,17 @@ Dry-run output starts with `Would update`.
 Update details and the summary go to stdout.
 Progress messages go to stderr during scanning,
 upstream lookups, file checks, and writes.
+When stderr is a terminal,
+lookup progress is drawn as one bar per worker and redrawn in place:
+
+```text
+Resolving upstreams [3/5]:
+  Worker  1: [#############-------] 2/3 actions/checkout
+  Worker  2: [##########----------] 1/2 actions/setup-python
+```
+
+Otherwise, such as in CI logs,
+each finished lookup prints one `Resolved [n/total] owner/repo (worker N)` line.
 Dry runs do not write files or show write progress.
 Diagnostic logs also go to stderr and respect `--log-level`;
 progress is shown independently of the log level.

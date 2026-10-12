@@ -22,8 +22,12 @@ The `resolver` module runs `git ls-remote` with an argument list,
 never through a shell.
 Results are cached per upstream repository for one command invocation.
 After parsing all files,
-a bounded standard-library thread pool fetches independent upstreams in parallel.
-Only the main thread populates the resolver cache,
+the upstreams are split round-robin into one bucket per worker,
+and a bounded standard-library thread pool resolves the buckets in parallel.
+The `progress` module renders one progress bar per worker on interactive terminals
+and plain lines otherwise.
+Workers return their results,
+and only the main thread populates the resolver cache,
 while `files` handles discovery and atomic writes.
 The `cli` module coordinates parsing, resolution, and writes.
 Resolution selects numeric tags

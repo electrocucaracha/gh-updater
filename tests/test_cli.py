@@ -249,12 +249,40 @@ class UpdaterTests(unittest.TestCase):
                 self.assertIn("Would update 1 of 1", output.getvalue())
                 self.assertEqual(path.read_text(), original)
 
+    @patch("gh_updater.resolver.subprocess.run", return_value=remote_output())
+    def test_workers_option_caps_at_upstream_count(self, run):
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "action.yml"
+            path.write_text(
+                "runs:\n  steps:\n"
+                "    - uses: owner/first@v9\n"
+                "    - uses: owner/second@v9\n"
+            )
+            for workers, expected in (("1", 1), ("8", 2)):
+                with (
+                    self.subTest(workers=workers),
+                    contextlib.redirect_stdout(io.StringIO()),
+                    contextlib.redirect_stderr(io.StringIO()) as progress,
+                ):
+                    self.assertEqual(
+                        main([directory, "--dry-run", "--workers", workers]), 0
+                    )
+                self.assertIn(f"with {expected} worker(s)", progress.getvalue())
+                self.assertIn("Resolved [2/2]", progress.getvalue())
+                self.assertIn(f"(worker {expected})", progress.getvalue())
+
     def test_click_help_invalid_options_and_empty_directory(self):
         with contextlib.redirect_stdout(io.StringIO()) as output:
             self.assertEqual(main(["--help"]), 0)
             self.assertEqual(main(["-h"]), 0)
         self.assertIn("--log-level", output.getvalue())
-        for args in (["--log-level", "invalid"], ["--unknown"], [__file__]):
+        self.assertIn("--workers", output.getvalue())
+        for args in (
+            ["--log-level", "invalid"],
+            ["--unknown"],
+            [__file__],
+            ["--workers", "0"],
+        ):
             with (
                 self.subTest(args=args),
                 contextlib.redirect_stderr(io.StringIO()) as errors,

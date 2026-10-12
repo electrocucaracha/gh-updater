@@ -1,6 +1,7 @@
 """Command-line interface for updating GitHub Action references."""
 
 import logging
+import os
 import sys
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
@@ -11,6 +12,7 @@ import yaml
 from .actions import references, update_text
 from .errors import UpdateError
 from .files import discover, write_atomic
+from .progress import WorkerProgress, partition
 from .resolver import Resolver
 
 logger = logging.getLogger("gh-updater")
@@ -38,8 +40,19 @@ logger = logging.getLogger("gh-updater")
     show_default=True,
     help="Set diagnostic logging verbosity (progress is always shown).",
 )
+@click.option(
+    "--workers",
+    type=click.IntRange(min=1),
+    default=None,
+    envvar="GH_UPDATER_WORKERS",
+    help="Parallel lookup workers [default: min(32, CPUs + 4), capped at upstreams].",
+)
 def cli(
-    repository: Path, dry_run: bool, exclude: tuple[str, ...], log_level: str
+    repository: Path,
+    dry_run: bool,
+    exclude: tuple[str, ...],
+    log_level: str,
+    workers: int | None,
 ) -> int:
     """Pin GitHub Actions to the latest stable numeric tag's commit.
 
@@ -73,20 +86,33 @@ def cli(
             except (UpdateError, yaml.YAMLError) as exc:
                 raise UpdateError(f"{path.relative_to(root)}: {exc}") from exc
             sources.append((path, text))
+        auto = min(32, (os.cpu_count() or 1) + 4)
+        count = max(1, min(workers or auto, len(repos)))
         click.echo(
-            f"Found {len(files)} YAML file(s); resolving {len(repos)} upstream(s)...",
+            f"Found {len(files)} YAML file(s); resolving {len(repos)} upstream(s) "
+            f"with {count} worker(s)...",
             err=True,
         )
         if repos:
-            with ThreadPoolExecutor() as executor:
-                futures = {
-                    executor.submit(resolver.lookup, repo): repo
-                    for repo in sorted(repos)
-                }
-                for completed, future in enumerate(as_completed(futures), 1):
-                    repo = futures[future]
-                    resolver.cache[repo] = future.result()
-                    click.echo(f"Resolved [{completed}/{len(repos)}] {repo}", err=True)
+            buckets = partition(sorted(repos), count)
+            progress = WorkerProgress([len(bucket) for bucket in buckets])
+
+            def work(worker: int, bucket: list[str]) -> dict[str, dict[str, str]]:
+                results = {}
+                for repo in bucket:
+                    results[repo] = resolver.lookup(repo)
+                    progress.advance(worker, repo)
+                return results
+
+            progress.start()
+            with ThreadPoolExecutor(max_workers=count) as executor:
+                futures = [
+                    executor.submit(work, worker, bucket)
+                    for worker, bucket in enumerate(buckets)
+                ]
+                # Only the main thread mutates the shared cache.
+                for future in as_completed(futures):
+                    resolver.cache.update(future.result())
         for completed, (path, text) in enumerate(sources, 1):
             try:
                 updated, changes = update_text(text, resolver, excluded)
