@@ -17,6 +17,8 @@ gh-updater finds remote action references,
 updates them to the latest stable version's commit SHA,
 and leaves the changes for you to review.
 
+![Diagram](docs/assets/diagram.png)
+
 ## Why commit SHAs instead of version tags?
 
 A reference such as `owner/action@v1` identifies a tag,
