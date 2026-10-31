@@ -15,6 +15,22 @@ repos:
     hooks:
       - id: trailing-whitespace
       - id: check-yaml
+  - repo: local
+    hooks:
+      - id: biome-format
+        name: biome format
+        entry: biome format --write --files-ignore-unknown=true --no-errors-on-unmatched
+        language: node
+        additional_dependencies: ["@biomejs/biome@2.3.8"]
+        types: [json]
+        require_serial: true
+      - id: markdownlint
+        name: markdownlint
+        entry: markdownlint
+        language: node
+        additional_dependencies: ["markdownlint-cli@0.50.0"]
+        types: [markdown]
+        files: \.(md|mdown|markdown)$
   - repo: https://github.com/shellcheck-py/shellcheck-py
     rev: v0.11.0.1-1
     hooks:
@@ -31,11 +47,6 @@ repos:
         args: ["-v", "-iE006", "-iE005,E042,E043"]
         files: .*\.sh
         exclude: ".tox/.*"
-  - repo: https://github.com/igorshubovych/markdownlint-cli
-    rev: v0.50.0
-    hooks:
-      - id: markdownlint
-        files: \.(md|mdown|markdown)$
   - repo: https://github.com/google/yamlfmt
     rev: v0.21.0
     hooks:
