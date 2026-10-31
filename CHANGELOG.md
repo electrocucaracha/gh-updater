@@ -9,6 +9,66 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.6.2] - 2026-10-30
+
+### Changed
+
+- Simplified the codespell pre-commit hook to exclude the generated uv.lock file from spell checking, reducing pre-commit noise and improving workflow efficiency. [5bbb58a1](https://github.com/electrocucaracha/gh-updater/commit/5bbb58a16e240d86847e5d64d5255918e3dc20ef)
+
+## [1.6.1] - 2026-10-30
+
+### Changed
+
+- Modernized configuration file indentation to use tabs consistently with the surrounding project's formatting style. [33b3523c](https://github.com/electrocucaracha/gh-updater/commit/33b3523c4d9d6462fcf07367ba7781da6ee203c2)
+
+## [1.6.0] - 2026-10-30
+
+### Added
+
+- Enabled project contributors to work with consistent formatting by enforcing 2-space indents with tabs for JSON files and allowing Markdown files to inherit their indent size from editors, thereby reducing conflicts with Markdown linters and misconfigurations. [890285cf](https://github.com/electrocucaracha/gh-updater/commit/890285cf88477ba2cae2a47d13862ebd487c8cae)
+
+## [1.5.5] - 2026-10-30
+
+### Changed
+
+- Improved code quality and maintainability by introducing type annotations and clear documentation to CLI and test methods, and by enforcing consistent formatting and linting with updated tools and configurations. [a60f621f](https://github.com/electrocucaracha/gh-updater/commit/a60f621f08a7c6e68173478f780ee7e629a7e35e)
+
+## [1.5.4] - 2026-10-30
+
+### Changed
+
+- Unified linter management by centralizing Python tool configurations in pyproject.toml, standardizing formatting and linter rules, and simplifying management to reduce duplication. [3f489936](https://github.com/electrocucaracha/gh-updater/commit/3f489936f382d96b0564fd4d62b726a69f576e33)
+
+## [1.5.3] - 2026-10-30
+
+### Changed
+
+- Simplified the pre-commit configuration by replacing the external markdownlint hook with a local node-based hook that includes biome-format for JSON files. [e15a044e](https://github.com/electrocucaracha/gh-updater/commit/e15a044e932915ee5c9122d0ef4b38c4b9578273)
+
+## [1.5.2] - 2026-10-30
+
+### Changed
+
+- Optimized code quality enforcement and maintainability by migrating the GitHub Actions linter workflow to use modular jobs, a shared super-linter, and updated permissions for least privilege, while also adding license/copyright headers for clarity. [2a6d73b6](https://github.com/electrocucaracha/gh-updater/commit/2a6d73b6d89f9fa8d88fd97045b61862ffa1fc7c)
+
+## [1.5.1] - 2026-10-30
+
+### Changed
+
+- Modernized dependency management by automating weekly version updates through a scheduled GitHub Actions workflow and corresponding shell script, ensuring up-to-date automation and development tools across multiple Python versions. [a4bb43ff](https://github.com/electrocucaracha/gh-updater/commit/a4bb43ff999e573a6eebf4136e0be316c6a4910d)
+
+## [1.5.0] - 2026-10-12
+
+### Added
+
+- Enabled users to support ongoing development through funding links, introducing GitHub Sponsors and Buy Me a Coffee profiles for community contributions and project sustainability. [fa2cf941](https://github.com/electrocucaracha/gh-updater/commit/fa2cf941ac3c2f9c7abe12762d2a1bd6dcf3fee9)
+
+## [1.4.0] - 2026-10-12
+
+### Added
+
+- Enabled a structured record of project changes through the introduction of a CHANGELOG.md file adhering to Keep a Changelog and Semantic Versioning guidelines. [151ba2ac](https://github.com/electrocucaracha/gh-updater/commit/151ba2ac8903864baf48bd6f4e9b3e489bb522bc)
+
 ## [1.3.1] - 2026-10-12
 
 ### Changed
