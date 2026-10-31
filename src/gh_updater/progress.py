@@ -39,9 +39,9 @@ class WorkerProgress:
         lines = [f"Resolving upstreams [{self.completed}/{sum(self.totals)}]:"]
         for worker, (done, total) in enumerate(zip(self.done, self.totals)):
             filled = self.width * done // total if total else self.width
-            bar = "#" * filled + "-" * (self.width - filled)
+            progress_bar = "#" * filled + "-" * (self.width - filled)
             lines.append(
-                f"  Worker {worker + 1:>2}: [{bar}] {done}/{total} "
+                f"  Worker {worker + 1:>2}: [{progress_bar}] {done}/{total} "
                 f"{self.current[worker]}".rstrip()
             )
         return lines

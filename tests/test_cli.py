@@ -1,3 +1,5 @@
+"""Exercise action resolution, YAML preservation, and CLI update behavior."""
+
 import contextlib
 import io
 import subprocess
@@ -21,6 +23,7 @@ TAG_OBJECT = "3" * 40
 
 
 def remote_output():
+    """Return Git tag output with numeric, annotated, and prerelease tags."""
     return subprocess.CompletedProcess(
         [],
         0,
@@ -33,8 +36,11 @@ def remote_output():
 
 
 class UpdaterTests(unittest.TestCase):
+    """Cover action updates and CLI failures without live GitHub lookups."""
+
     @patch("gh_updater.resolver.subprocess.run", return_value=remote_output())
     def test_latest_numeric_annotated_tag_and_cache(self, run):
+        """Resolve the newest stable tag once and reuse its cached commit."""
         resolver = Resolver()
         self.assertEqual(resolver.resolve("owner/repo", "v9"), (NEW, "v10.2.0"))
         self.assertEqual(resolver.resolve("owner/repo", OLD), (NEW, "v10.2.0"))
@@ -43,6 +49,7 @@ class UpdaterTests(unittest.TestCase):
 
     @patch("gh_updater.resolver.subprocess.run", return_value=remote_output())
     def test_yaml_preservation_subpaths_comments_and_idempotence(self, run):
+        """Preserve YAML text and human comments across repeated updates."""
         text = (
             "on: push\r\njobs:\r\n  build:\r\n    steps:\r\n"
             f"      - uses: 'owner/repo/sub@{OLD}' # v9 keep this\r\n"
@@ -60,6 +67,7 @@ class UpdaterTests(unittest.TestCase):
 
     @patch("gh_updater.resolver.subprocess.run", return_value=remote_output())
     def test_reusable_workflows_composites_quotes_and_exclusions(self, run):
+        """Update workflow and composite references while honoring exclusions."""
         for text in (
             'jobs:\n  call:\n    uses: "owner/repo/.github/workflows/ci.yaml@v9"\n',
             "runs:\n  using: composite\n  steps:\n    - uses: owner/repo@v9 # reason\n",
@@ -75,7 +83,8 @@ class UpdaterTests(unittest.TestCase):
         self.assertEqual(run.call_count, 2)
 
     @patch("gh_updater.resolver.subprocess.run", return_value=remote_output())
-    def test_flow_and_anchor_remain_valid(self, run):
+    def test_flow_and_anchor_remain_valid(self, _run):
+        """Keep flow mappings and anchored references valid after updates."""
         text = (
             "jobs:\n  build:\n    steps:\n"
             "      - uses: &action owner/repo@v9\n"
@@ -91,6 +100,7 @@ class UpdaterTests(unittest.TestCase):
 
     @patch("gh_updater.resolver.subprocess.run")
     def test_no_tags_branch_hints_are_per_occurrence(self, run):
+        """Resolve each branch hint separately when no stable tags exist."""
         run.return_value = subprocess.CompletedProcess(
             [], 0, f"{OLD}\trefs/heads/main\n{NEW}\trefs/heads/develop\n", ""
         )
@@ -108,6 +118,7 @@ class UpdaterTests(unittest.TestCase):
             Resolver().resolve("owner/repo", OLD)
 
     def test_invalid_and_multiline_uses_fail(self):
+        """Reject invalid action references and multiline uses values."""
         for value in (
             "owner/repo",
             "|\n          owner/repo@v1",
@@ -118,6 +129,7 @@ class UpdaterTests(unittest.TestCase):
 
     @patch("gh_updater.resolver.subprocess.run", return_value=remote_output())
     def test_cli_discovery_dry_run_write_and_no_partial_lookup_edits(self, run):
+        """Discover eligible files and avoid writes when any lookup fails."""
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             workflow = root / ".github/workflows/ci.yaml"
@@ -149,7 +161,7 @@ class UpdaterTests(unittest.TestCase):
             workflow.write_bytes(original)
             composite.write_text("runs:\n  steps:\n    - uses: owner/missing@v1\n")
 
-            def lookup(command, **kwargs):
+            def lookup(command, **_kwargs):
                 if command[-1] == "https://github.com/owner/missing.git":
                     raise subprocess.CalledProcessError(128, [], stderr="not found")
                 return remote_output()
@@ -162,6 +174,7 @@ class UpdaterTests(unittest.TestCase):
 
     @patch("gh_updater.resolver.subprocess.run")
     def test_timeout_and_missing_tags_are_errors(self, run):
+        """Report timed-out lookups and unresolved references as errors."""
         run.side_effect = subprocess.TimeoutExpired("git", 60)
         with self.assertRaisesRegex(UpdateError, "timed out"):
             Resolver().resolve("owner/repo", "v1")
@@ -172,6 +185,7 @@ class UpdaterTests(unittest.TestCase):
 
     @patch("gh_updater.resolver.subprocess.run")
     def test_equal_versions_prefer_specific_tag_and_numeric_order(self, run):
+        """Order versions numerically and prefer the most specific equal tag."""
         run.return_value = subprocess.CompletedProcess(
             [],
             0,
@@ -184,6 +198,7 @@ class UpdaterTests(unittest.TestCase):
         self.assertEqual(Resolver().resolve("owner/repo", "main"), (NEW, "10.0.0"))
 
     def test_yaml_error_leaves_files_unchanged(self):
+        """Report invalid YAML without changing the source file."""
         with tempfile.TemporaryDirectory() as directory:
             path = Path(directory) / "action.yml"
             path.write_text("runs: [")
@@ -194,6 +209,7 @@ class UpdaterTests(unittest.TestCase):
 
     @patch("gh_updater.resolver.subprocess.run")
     def test_parallel_lookups_deduplicate_and_finish_before_writes(self, run):
+        """Deduplicate parallel lookups and finish them before writing files."""
         barrier = threading.Barrier(2)
         with tempfile.TemporaryDirectory() as directory:
             path = Path(directory) / "action.yml"
@@ -206,7 +222,7 @@ class UpdaterTests(unittest.TestCase):
             )
             path.write_text(original)
 
-            def lookup(command, **kwargs):
+            def lookup(_command, **_kwargs):
                 self.assertEqual(path.read_text(), original)
                 barrier.wait(timeout=5)
                 return remote_output()
@@ -229,7 +245,8 @@ class UpdaterTests(unittest.TestCase):
             )
 
     @patch("gh_updater.resolver.subprocess.run", return_value=remote_output())
-    def test_log_levels_and_dry_run_progress(self, run):
+    def test_log_levels_and_dry_run_progress(self, _run):
+        """Keep dry-run progress visible independently of diagnostic verbosity."""
         with tempfile.TemporaryDirectory() as directory:
             path = Path(directory) / "action.yml"
             original = "runs:\n  steps:\n    - uses: owner/repo@v9\n"
@@ -250,7 +267,8 @@ class UpdaterTests(unittest.TestCase):
                 self.assertEqual(path.read_text(), original)
 
     @patch("gh_updater.resolver.subprocess.run", return_value=remote_output())
-    def test_workers_option_caps_at_upstream_count(self, run):
+    def test_workers_option_caps_at_upstream_count(self, _run):
+        """Limit parallel workers to the number of unique upstream repositories."""
         with tempfile.TemporaryDirectory() as directory:
             path = Path(directory) / "action.yml"
             path.write_text(
@@ -272,6 +290,7 @@ class UpdaterTests(unittest.TestCase):
                 self.assertIn(f"(worker {expected})", progress.getvalue())
 
     def test_click_help_invalid_options_and_empty_directory(self):
+        """Handle help, invalid arguments, and repositories without YAML files."""
         with contextlib.redirect_stdout(io.StringIO()) as output:
             self.assertEqual(main(["--help"]), 0)
             self.assertEqual(main(["-h"]), 0)
@@ -300,7 +319,9 @@ class UpdaterTests(unittest.TestCase):
 
     @patch("gh_updater.resolver.subprocess.run")
     def test_resolution_failure_is_visible_at_critical_without_writes(self, run):
-        def lookup(command, **kwargs):
+        """Keep resolution errors visible at critical log level without writes."""
+
+        def lookup(command, **_kwargs):
             if command[-1] == "https://github.com/owner/branch.git":
                 return subprocess.CompletedProcess(
                     [], 0, f"{NEW}\trefs/heads/main\n", ""

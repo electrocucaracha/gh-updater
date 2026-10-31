@@ -19,7 +19,14 @@ packages = ["src/gh_updater"]
 [dependency-groups]
 dev = ["tox>=4.22,<5", "pre-commit>=4,<5"]
 test = ["pytest>=8,<10", "pytest-cov>=6,<8"]
-fmt = ["ruff>=0.11,<1", "yamllint>=1.35,<2"]
+fmt = [
+    "ruff>=0.11,<1",
+    "yamllint>=1.35,<2",
+    "pylint>=3.3,<5",
+    "isort>=6,<10",
+    "mypy>=1.15,<2",
+    "types-PyYAML>=6,<7",
+]
 
 [tool.pytest.ini_options]
 addopts = "--doctest-modules"
@@ -27,9 +34,26 @@ testpaths = ["tests", "src"]
 
 [tool.ruff]
 target-version = "py310"
+line-length = 88
 
 [tool.ruff.lint]
 extend-select = ["I"]
+
+[tool.black]
+line-length = 88
+target-version = ["py310"]
+
+[tool.isort]
+profile = "black"
+known_first_party = ["gh_updater"]
+src_paths = ["src", "tests"]
+
+[tool.mypy]
+python_version = "3.10"
+
+[tool.pylint.design]
+max-attributes = 9
+max-locals = 30
 
 [tool.tox]
 env_list = ["test", "coverage", "lint"]
@@ -50,11 +74,14 @@ commands = [
 ]
 
 [tool.tox.env.lint]
-description = "Check Python formatting, imports, and repository YAML"
+description = "Check Python quality, formatting, and repository YAML"
 dependency_groups = ["fmt"]
 commands = [
     ["ruff", "check", "."],
     ["ruff", "format", "--check", "."],
+    ["isort", "--check-only", "--diff", "src", "tests"],
+    ["mypy", "src/gh_updater", "tests"],
+    ["pylint", "src/gh_updater", "tests"],
     ["yamllint", ".github", ".pre-commit-config.yaml", ".yamllint.yml"],
 ]
 

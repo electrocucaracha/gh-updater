@@ -1,3 +1,5 @@
+"""Check worker partitioning and terminal-aware progress rendering."""
+
 import io
 import unittest
 
@@ -5,18 +7,24 @@ from gh_updater.progress import WorkerProgress, partition
 
 
 class TerminalStream(io.StringIO):
+    """Provide an in-memory stream that behaves like a terminal."""
+
     def isatty(self):
         return True
 
 
 class ProgressTests(unittest.TestCase):
+    """Cover worker assignment and interactive and plain-text progress output."""
+
     def test_partition_round_robin(self):
+        """Assign items round-robin without losing or reordering each bucket."""
         self.assertEqual(
             partition(["a", "b", "c", "d", "e"], 2), [["a", "c", "e"], ["b", "d"]]
         )
         self.assertEqual(partition(["a"], 1), [["a"]])
 
     def test_non_interactive_prints_one_line_per_item(self):
+        """Emit one readable line per completed item on non-terminal streams."""
         stream = io.StringIO()
         progress = WorkerProgress([1, 1], stream)
         progress.start()
@@ -28,6 +36,7 @@ class ProgressTests(unittest.TestCase):
         )
 
     def test_interactive_redraws_bars_in_place(self):
+        """Redraw worker bars in place without printing plain-text status lines."""
         stream = TerminalStream()
         progress = WorkerProgress([2, 1], stream, width=4)
         progress.start()

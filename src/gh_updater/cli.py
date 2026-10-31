@@ -73,7 +73,7 @@ def cli(
         click.echo(f"Scanning {root}...", err=True)
         files = discover(root)
         sources = []
-        repos = set()
+        repos: set[str] = set()
         for path in files:
             text = path.read_bytes().decode("utf-8")
             try:
