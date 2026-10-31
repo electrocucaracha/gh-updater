@@ -11,7 +11,12 @@ trim_trailing_whitespace = true
 [*.{yaml,yml}]
 indent_size = 2
 
+[*.json]
+indent_style = tab
+indent_size = 2
+
 [*.md]
+indent_size = unset
 trim_trailing_whitespace = false
 
 [Makefile]
