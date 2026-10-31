@@ -40,9 +40,15 @@ lint: clean
 	-e RUN_LOCAL=true \
 	-e LINTER_RULES_PATH=/ \
 	-e DEFAULT_BRANCH=main \
+	-e PYTHON_BLACK_CONFIG_FILE=pyproject.toml \
+	-e PYTHON_ISORT_CONFIG_FILE=pyproject.toml \
+	-e PYTHON_MYPY_CONFIG_FILE=pyproject.toml \
+	-e PYTHON_PYLINT_CONFIG_FILE=pyproject.toml \
+	-e PYTHON_RUFF_CONFIG_FILE=pyproject.toml \
+	-e PYTHON_RUFF_FORMAT_CONFIG_FILE=pyproject.toml \
 	ghcr.io/super-linter/super-linter
 	command -v uvx > /dev/null || curl -LsSf https://astral.sh/uv/install.sh | sh
-	uvx tox -e lint-check
+	uvx tox -e lint
 	@echo "Lint complete!"
 
 fmt: clean
@@ -55,5 +61,5 @@ fmt: clean
 	command -v prettier > /dev/null || npm install prettier
 	npx prettier . --write
 	command -v uvx > /dev/null || curl -LsSf https://astral.sh/uv/install.sh | sh
-	uvx tox -e lint
+	uvx tox -e fmt
 	@echo "Format complete!"
