@@ -3,11 +3,13 @@
 | Workflow                             | Purpose                                                          | Triggers                            |
 | ------------------------------------ | ---------------------------------------------------------------- | ----------------------------------- |
 | [on-demand_ci.yml](on-demand_ci.yml) | Tests, 80% coverage gate, CLI smoke test, and distribution build | Push, pull request, manual dispatch |
-| [linter.yml](linter.yml)             | Super-Linter, source counts, and documentation link checks       | Push, pull request                  |
+| [linter.yml](linter.yml)             | Super-Linter, tox Python lint, source counts, and link checks    | Push, pull request                  |
 
 The Super-Linter workflow loads Python tool settings from `pyproject.toml`,
 including the shared 88-column formatting policy
 and first-party classification for `gh_updater` imports.
+Mypy and pylint run through tox instead,
+so its environment includes the project's runtime dependencies.
 The Docker lint target uses the same configuration overrides.
 
 The test matrix covers Python 3.10 through 3.14 on Linux

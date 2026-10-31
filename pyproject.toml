@@ -83,6 +83,7 @@ commands = [
     ["mypy", "src/gh_updater", "tests"],
     ["pylint", "src/gh_updater", "tests"],
     ["yamllint", ".github", ".pre-commit-config.yaml", ".yamllint.yml"],
+    ["yamllint", "-d", "{extends: default, rules: {indentation: {spaces: 4}}}", ".yamlfmt"],
 ]
 
 [tool.tox.env.fmt]
