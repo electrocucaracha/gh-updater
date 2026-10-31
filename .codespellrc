@@ -1,2 +1,2 @@
 [codespell]
-skip = uv.lock
+skip = uv.lock,*/uv.lock
