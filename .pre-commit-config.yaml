@@ -57,7 +57,7 @@ repos:
       - id: codespell
         exclude: ^uv\.lock$
   - repo: https://github.com/electrocucaracha/ai-prepare-commit-msg
-    rev: v20.10.5
+    rev: v20.14.0
     hooks:
       - id: ai-prepare-commit
         stages:
