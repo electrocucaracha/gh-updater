@@ -10,11 +10,13 @@
 
 set -o errexit
 set -o pipefail
+MAKE_FLAGS=()
 if [[ ${DEBUG:-false} == "true" ]]; then
     set -o xtrace
+    MAKE_FLAGS+=(--trace)
 fi
 
-trap "make fmt" EXIT
+trap 'make "${MAKE_FLAGS[@]}" fmt' EXIT
 
 if ! command -v uv >/dev/null; then
     curl -LsSf https://astral.sh/uv/install.sh | sh
