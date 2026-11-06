@@ -51,7 +51,7 @@ lint: clean
 	-e SPELL_CODESPELL_CONFIG_FILE=.codespellrc \
 	ghcr.io/super-linter/super-linter
 	command -v uvx > /dev/null || curl -LsSf https://astral.sh/uv/install.sh | sh
-	uvx tox -e lint
+	$(UV) run --frozen tox -e lint
 	@echo "Lint complete!"
 
 fmt: clean
@@ -65,5 +65,5 @@ fmt: clean
 	npx prettier . --write
 	npx prettier --parser yaml --tab-width 4 .yamlfmt --write
 	command -v uvx > /dev/null || curl -LsSf https://astral.sh/uv/install.sh | sh
-	uvx tox -e fmt
+	$(UV) run --frozen tox -e fmt
 	@echo "Format complete!"
