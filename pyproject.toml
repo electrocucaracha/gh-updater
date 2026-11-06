@@ -17,7 +17,7 @@ gh-updater = "gh_updater.cli:main"
 packages = ["src/gh_updater"]
 
 [dependency-groups]
-dev = ["tox>=4.22,<5", "pre-commit>=4,<5"]
+dev = ["tox>=4.22,<4.62", "pre-commit>=4,<5", "virtualenv>=20.26,<21"]
 test = ["pytest>=8,<10", "pytest-cov>=6,<8"]
 fmt = [
     "ruff>=0.11,<1",
