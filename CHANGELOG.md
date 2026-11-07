@@ -9,6 +9,78 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.10.0] - 2026-11-06
+
+### Added
+
+- Optimized repository size and project organization by ignoring the node_modules directory to prevent tracking of large dependencies and build artifacts. [177a5689](https://github.com/electrocucaracha/gh-updater/commit/177a5689cf71060bfbb3df0d14d725b2312f1ef3)
+
+## [1.9.1] - 2026-11-06
+
+### Changed
+
+- Stabilized the handling of the `.textlintignore` file by ensuring it ends with a newline, thereby preventing issues with tools that expect newline-terminated files and maintaining POSIX compatibility. [d5313f30](https://github.com/electrocucaracha/gh-updater/commit/d5313f3086453d1b08a8e0c4e8a46451002c9d1c)
+
+## [1.9.0] - 2026-11-06
+
+### Added
+
+- Enabled textlint to focus on project source files by excluding virtual environment and test runner artifacts from analysis. [87ce6430](https://github.com/electrocucaracha/gh-updater/commit/87ce6430c80ca2e7ea743f86b04667b82e2c7e9e)
+
+## [1.8.2] - 2026-11-06
+
+### Changed
+
+- Stabilized tox commands to ensure reproducible dependency resolutions and prevent lockfile updates during lint and format targets. [7aa1adce](https://github.com/electrocucaracha/gh-updater/commit/7aa1adce6d1c70f6cfcd656c1b98b903e460c79d)
+
+## [1.8.1] - 2026-11-06
+
+### Changed
+
+- Restricted the tox upper bound in the dev group to <4.62 to prevent compatibility issues with newer versions, and introduced virtualenv as an explicit dev dependency to ensure reliable environment setup and alignment with tox's requirements. [8bfd1436](https://github.com/electrocucaracha/gh-updater/commit/8bfd1436d5e364d7fe76a311a8e433848383c927)
+
+## [1.8.0] - 2026-11-06
+
+### Added
+
+- Enable automatic review requests in pull requests by defining maintainers responsible for all code in the repository, with @electrocucaracha assigned as the default owner for all paths. [d09a22b6](https://github.com/electrocucaracha/gh-updater/commit/d09a22b6c0ae7df0d98d2e6b75d9c13fc7fbc722)
+
+## [1.7.5] - 2026-11-06
+
+### Fixed
+
+- make now preserves trace output when debugging is enabled during version updates. [3191d7d6](https://github.com/electrocucaracha/gh-updater/commit/3191d7d6621b77a76fc51cc27b63ab54df833921)
+
+## [1.7.4] - 2026-11-06
+
+### Changed
+
+- Updated CI workflows and pre-commit hook versions to leverage the latest fixes and features, bumping the reusable workflow version in GitHub Actions linter from v12.1.1 to v13.2.0 and the ai-prepare-commit-msg pre-commit hook version from v20.10.5 to v20.14.0. [4ec6b2f4](https://github.com/electrocucaracha/gh-updater/commit/4ec6b2f43f0a2a0f7e313bbba734b77aadbee42b)
+
+## [1.7.3] - 2026-10-30
+
+### Fixed
+
+- Stabilized codespell runs by expanding the skip pattern to exclude uv.lock files in subdirectories, preventing false positives or unnecessary checks on dependency lockfiles across the project structure. [8ef3f927](https://github.com/electrocucaracha/gh-updater/commit/8ef3f927fdc84c38da3e07d107d98ea82adab43d)
+
+## [1.7.2] - 2026-10-30
+
+### Changed
+
+- Configuration files now adhere to POSIX conventions by ending with a newline, improving compatibility with tools that expect configuration files to have a trailing newline. [44f39468](https://github.com/electrocucaracha/gh-updater/commit/44f394682b1f4cd783d42ff01f4968efa119e7ae)
+
+## [1.7.1] - 2026-10-30
+
+### Changed
+
+- Simplified the project's linting process by running mypy and pylint checks in a separate job via tox and disabling them in Super-Linter, while also updating the Makefile and workflow documentation to reflect these changes. [00c81c97](https://github.com/electrocucaracha/gh-updater/commit/00c81c975f9241da2a769b80bdc74c97feefc3f6)
+
+## [1.7.0] - 2026-10-30
+
+### Added
+
+- Enabled detailed changelog entries for versions 1.4.0 through 1.6.2, documenting enhancements to code quality, dependency management, linter configuration, project formatting, and pre-commit hook adjustments, thereby improving code maintainability and enforcing consistent formatting and linting. [7e694a51](https://github.com/electrocucaracha/gh-updater/commit/7e694a51637420581b9acac5e238bfaa5a2415d8)
+
 ## [1.6.2] - 2026-10-30
 
 ### Changed
